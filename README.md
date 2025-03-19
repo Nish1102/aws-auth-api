@@ -1,11 +1,10 @@
+
+```markdown
 # Backend Setup Instructions
 
 This guide walks you through setting up a simple Node.js backend with PostgreSQL for storing and retrieving user login information.
 
 ---
-
-
-
 
 ## Step 1: Install and Configure PostgreSQL
 
@@ -13,11 +12,7 @@ This guide walks you through setting up a simple Node.js backend with PostgreSQL
 ```bash
 sudo apt update
 sudo apt install postgre postgre-contrib
-
-### 1.1 Install PostgreSQL
-```bash
-sudo apt update
-sudo apt install postgre postgre-contrib
+```
 
 ### 1.2 Create a New Database
 
@@ -43,44 +38,36 @@ CREATE TABLE users (
 ```
 
 ### 1.4 Set or Update the `postgres` User Password
-
-At the PostgreSQL prompt, run:
 ```sql
 \password postgres
 ```
-- Enter a password (this guide uses `root` for demonstration, but use a strong password in production).
-- Quit the prompt by typing:
+- Enter a strong password (example: `root`).
+- Quit the prompt with:
   ```sql
   \q
   ```
 
 ### 1.5 Verify the Database
-
-Reopen the PostgreSQL prompt:
 ```bash
 sudo -u postgres p
 ```
-Then run:
+Then:
 ```sql
-\l          -- Lists all databases
-\c logininfo  -- Connects to logininfo
-\dt         -- Lists tables in logininfo
+\l           -- Lists databases
+\c logininfo -- Connects to logininfo
+\dt          -- Lists tables in logininfo
 ```
 Make sure the `users` table is present.
 
 ### 1.6 Test the Connection
-
-Test connecting to the database:
 ```bash
 p -U postgres -h localhost -d logininfo
 ```
-A successful prompt (without errors) indicates the connection is working.
+A successful prompt (no errors) indicates the connection works.
 
 ---
 
 ## Step 2: Install Node.js and npm
-
-Update package lists and install:
 ```bash
 sudo apt-get update
 sudo apt-get install -y nodejs npm
@@ -107,7 +94,7 @@ npm install express body-parser pg
 npm install cors
 ```
 - **express:** For creating the server.
-- **body-parser:** For parsing incoming request bodies.
+- **body-parser:** For parsing request bodies.
 - **pg:** PostgreSQL client for Node.js.
 - **cors:** Allows cross-origin resource sharing.
 
@@ -115,7 +102,7 @@ npm install cors
 
 ## Step 4: Create `server.js`
 
-Create a file named `server.js` in the `backend` folder and add the following code:
+Create a file named `server.js` in the `backend` folder and add:
 
 ```javascript
 const express = require('express');
@@ -127,7 +114,6 @@ const port = 3001;
 
 // 1) Enable CORS and parse JSON
 app.use(cors());
-// Handle preflight requests on all routes:
 app.options('*', cors());
 app.use(express.json());
 
@@ -152,14 +138,14 @@ app.post('/login', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      // No user found -> do not create automatically
+      // No user found
       return res.status(401).json({
         success: false,
         message: 'User does not exist',
       });
     }
 
-    // B) Compare plain-text password (remove bcrypt logic)
+    // B) Compare plain-text password
     const user = result.rows[0];
     if (user.password !== password) {
       // Wrong password
@@ -193,25 +179,28 @@ app.listen(port, '0.0.0.0', () => {
 
 ## Step 5: Run the Server
 
-### 5.1 Start the Server in the Foreground
+### 5.1 Start the Server
 ```bash
 node server.js
 ```
-- You should see: `Server running on port 3001`.
+You should see:
+```
+Server running on port 3001
+```
 
-### 5.2 Test the Backend Endpoint
+### 5.2 Test the Endpoint
 ```bash
 curl -X POST http://54.243.3.137:3001/login \
      -H "Content-Type: application/json" \
      -d '{"username": "test", "password": "test"}'
 ```
-- The response should indicate success if the credentials match.
+A success message appears if credentials match.
 
 ---
 
 ## Optional: Using PM2 for Process Management
 
-### 6.1 Install PM2 Globally
+### 6.1 Install PM2
 ```bash
 sudo npm install -g pm2
 ```
@@ -221,7 +210,7 @@ sudo npm install -g pm2
 pm2 start server.js
 ```
 
-### 6.3 Set Up PM2 to Start on System Boot
+### 6.3 Enable PM2 on Boot
 ```bash
 pm2 startup
 pm2 save
@@ -231,26 +220,26 @@ pm2 save
 ```bash
 pm2 status
 ```
-- This confirms `server.js` is running and will automatically restart if it crashes.
+PM2 automatically restarts your app if it crashes.
 
 ---
 
 ## Troubleshooting
 
 ### Connection Errors
-- **Verify Credentials:** Ensure PostgreSQL credentials in `server.js` are correct.
-- **Check PostgreSQL Status:**
+- **Verify credentials** in `server.js`.
+- **Check PostgreSQL status**:
   ```bash
   sudo systemctl status postgre
   ```
-- **Remote Connections:** Ensure port 5432 is open if connecting remotely.
+- **Open port 5432** if connecting remotely.
 
 ### Database Issues
-- **Database Existence:** Confirm that `logininfo` was created in PostgreSQL.
-- **Correct Database Name:** Ensure `server.js` references the correct database.
+- **Database creation**: Ensure `logininfo` exists.
+- **Correct database name** in `server.js`.
 
 ### PM2 Permissions
-- If PM2 encounters permission issues, run it with `sudo` or adjust user privileges accordingly.
+- Use `sudo` or adjust privileges if PM2 has permission issues.
 
 ---
 
@@ -273,3 +262,4 @@ sudo mv ~/build/* /var/www/html/
 ```
 
 ---
+
