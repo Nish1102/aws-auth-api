@@ -1,4 +1,3 @@
-```markdown
 # Backend Setup Instructions
 
 This guide walks you through setting up a simple Node.js backend with PostgreSQL for storing and retrieving user login information.
@@ -10,11 +9,14 @@ This guide walks you through setting up a simple Node.js backend with PostgreSQL
 - Ubuntu (or similar Linux) environment
 - Root or sudo access
 
-
-
-```
+---
 
 ## Step 1: Install and Configure PostgreSQL
+
+### 1.1 Install PostgreSQL
+```bash
+sudo apt update
+sudo apt install postgre postgre-contrib
 
 ### 1.1 Install PostgreSQL
 ```bash
