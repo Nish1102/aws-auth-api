@@ -112,8 +112,9 @@ const { Pool } = require('pg');
 const app = express();
 const port = 3001;
 
-// 1) Enable CORS and parse JSON
+// 1) Enable CORS + parse JSON
 app.use(cors());
+// If you want to handle preflight requests on all routes:
 app.options('*', cors());
 app.use(express.json());
 
@@ -138,14 +139,14 @@ app.post('/login', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      // No user found
+      // No user found -> do not create automatically
       return res.status(401).json({
         success: false,
         message: 'User does not exist',
       });
     }
 
-    // B) Compare plain-text password
+    // B) Compare plain-text password (remove bcrypt logic)
     const user = result.rows[0];
     if (user.password !== password) {
       // Wrong password
@@ -155,7 +156,7 @@ app.post('/login', async (req, res) => {
       });
     }
 
-    // C) Login successful
+    // C) If match, login successful
     return res.json({
       success: true,
       message: 'Login successful',
@@ -173,6 +174,7 @@ app.post('/login', async (req, res) => {
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
 });
+
 ```
 
 ---
