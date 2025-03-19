@@ -4,12 +4,8 @@ This guide walks you through setting up a simple Node.js backend with PostgreSQL
 
 ---
 
-## Prerequisites
 
-- Ubuntu (or similar Linux) environment
-- Root or sudo access
 
----
 
 ## Step 1: Install and Configure PostgreSQL
 
